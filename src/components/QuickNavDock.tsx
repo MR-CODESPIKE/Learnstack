@@ -118,7 +118,7 @@ export default function QuickNavDock({ onOpenTutor }: QuickNavDockProps) {
     <>
       {/* Floating Bottom Quick-Nav Bar for Desktop & Mobile */}
       <div className="fixed bottom-5 left-0 right-0 z-40 px-4 pointer-events-none flex justify-center">
-        <div className="pointer-events-auto bg-[#FAF4ED]/95 backdrop-blur-md border border-[#D6C5B3] rounded-2xl shadow-xl shadow-[#2A1E17]/10 p-1.5 flex items-center gap-1 transition-all">
+        <div className="pointer-events-auto liquid-glass-dock rounded-2xl p-1.5 flex items-center gap-1 transition-all">
           
           {/* Quick Nav Label / Icon */}
           <div className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 border-r border-[#D6C5B3] text-xs font-mono font-bold text-[#8C4A1B]">

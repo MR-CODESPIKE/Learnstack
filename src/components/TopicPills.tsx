@@ -69,8 +69,8 @@ export default function TopicPills({ selectedTopic, onSelectTopic }: TopicPillsP
                   topic.isLive
                     ? isSelected
                       ? 'bg-gradient-to-r from-[#A6632B] via-[#C77A38] to-[#8C4A1B] text-white font-bold shadow-md scale-[1.02]'
-                      : 'bg-[#FAF4ED] text-[#2A1E17] hover:bg-[#EFE5D9] border border-[#D6C5B3]'
-                    : 'bg-[#FAF4ED]/70 text-[#6E5D4F] hover:text-[#2A1E17] hover:bg-[#FAF4ED] border border-[#D6C5B3]'
+                      : 'liquid-glass-card text-[#2A1E17]'
+                    : 'liquid-glass-pill text-[#6E5D4F] hover:text-[#2A1E17]'
                 }`}
               >
                 <span className={topic.isLive ? (isSelected ? 'text-white' : 'text-[#A6632B]') : 'text-[#6E5D4F]'}>

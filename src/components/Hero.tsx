@@ -17,6 +17,10 @@ export default function Hero({ onOpenTutor }: HeroProps) {
       />
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-gradient-to-r from-[#E6B875]/15 to-[#C49BFA]/15 blur-[120px] rounded-full pointer-events-none" />
 
+      {/* Ambient Liquid Glass Morphing Blobs */}
+      <div className="absolute top-1/4 left-10 w-96 h-96 bg-gradient-to-tr from-[#A6632B]/20 to-[#C77A38]/15 rounded-full animate-liquid-blob" />
+      <div className="absolute bottom-10 right-10 w-[450px] h-[450px] bg-gradient-to-br from-[#8C4A1B]/15 to-[#EFE5D9]/40 rounded-full animate-liquid-blob-delayed" />
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
           
@@ -33,7 +37,7 @@ export default function Hero({ onOpenTutor }: HeroProps) {
                 const el = document.getElementById('simulators');
                 if (el) el.scrollIntoView({ behavior: 'smooth' });
               }}
-              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FAF4ED] hover:bg-[#EFE5D9] border border-[#D6C5B3] text-xs font-mono text-[#8C4A1B] font-semibold transition-all hover:scale-[1.02] active:scale-[0.98] text-left"
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full liquid-glass-pill text-xs font-mono text-[#8C4A1B] font-semibold transition-all hover:scale-[1.02] active:scale-[0.98] text-left"
             >
               <Cpu className="w-3.5 h-3.5 text-[#A6632B]" />
               <span>Next-Gen Computer Science & Neural Learning</span>
@@ -75,7 +79,7 @@ export default function Hero({ onOpenTutor }: HeroProps) {
                   const el = document.getElementById('lessons');
                   if (el) el.scrollIntoView({ behavior: 'smooth' });
                 }}
-                className="p-3 rounded-xl bg-[#FAF4ED] hover:bg-[#EFE5D9] border border-[#D6C5B3] shadow-sm text-left transition-all hover:scale-[1.02] active:scale-[0.98] group"
+                className="p-3 rounded-xl liquid-glass-card text-left group"
               >
                 <div className="text-xl sm:text-2xl font-display font-bold text-[#2A1E17] group-hover:text-[#A6632B] transition-colors">50+</div>
                 <div className="text-[11px] font-mono text-[#6E5D4F] uppercase tracking-wider mt-0.5 font-medium">Interactive Lessons</div>
@@ -86,7 +90,7 @@ export default function Hero({ onOpenTutor }: HeroProps) {
                   const el = document.getElementById('simulators');
                   if (el) el.scrollIntoView({ behavior: 'smooth' });
                 }}
-                className="p-3 rounded-xl bg-[#FAF4ED] hover:bg-[#EFE5D9] border border-[#D6C5B3] shadow-sm text-left transition-all hover:scale-[1.02] active:scale-[0.98] group"
+                className="p-3 rounded-xl liquid-glass-card text-left group"
               >
                 <div className="text-xl sm:text-2xl font-display font-bold text-[#A6632B] group-hover:text-[#8C4A1B] transition-colors">Real-Time</div>
                 <div className="text-[11px] font-mono text-[#6E5D4F] uppercase tracking-wider mt-0.5 font-medium">3D Simulators</div>
@@ -94,7 +98,7 @@ export default function Hero({ onOpenTutor }: HeroProps) {
 
               <button
                 onClick={onOpenTutor}
-                className="p-3 rounded-xl bg-[#FAF4ED] hover:bg-[#EFE5D9] border border-[#D6C5B3] shadow-sm text-left transition-all hover:scale-[1.02] active:scale-[0.98] group"
+                className="p-3 rounded-xl liquid-glass-card text-left group"
               >
                 <div className="text-xl sm:text-2xl font-display font-bold text-[#8C4A1B] group-hover:text-[#A6632B] transition-colors">Gemini 3.6</div>
                 <div className="text-[11px] font-mono text-[#6E5D4F] uppercase tracking-wider mt-0.5 font-medium">Built-in AI Tutor</div>

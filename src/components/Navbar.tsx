@@ -75,7 +75,7 @@ export default function Navbar({ onOpenTutor, completedCount, totalLessons }: Na
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled || mobileMenuOpen
-          ? 'bg-[#F5EFE6]/95 backdrop-blur-md border-b border-[#D6C5B3] py-3 shadow-md'
+          ? 'liquid-glass py-3 shadow-md'
           : 'bg-transparent py-5'
       }`}
     >
@@ -103,7 +103,7 @@ export default function Navbar({ onOpenTutor, completedCount, totalLessons }: Na
         </button>
 
         {/* Navigation Links (Desktop) */}
-        <nav className="hidden md:flex items-center gap-1 bg-[#FAF4ED] border border-[#D6C5B3] rounded-full px-3 py-1.5 backdrop-blur-sm shadow-sm">
+        <nav className="hidden md:flex items-center gap-1 liquid-glass-pill rounded-full px-3 py-1.5 shadow-sm">
           {navLinks.map((link) => {
             const isActive = activeSection === link.id;
             return (
