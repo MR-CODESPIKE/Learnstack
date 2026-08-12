@@ -1,0 +1,6 @@
+{
+  "name": "LearnStack",
+  "description": "Interactive platform for software engineering, machine learning, and deep neural networks with built-in AI tutoring.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

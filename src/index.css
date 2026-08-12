@@ -1,0 +1,91 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-space: 'Space Grotesk', sans-serif;
+    --font-inter: 'Inter', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  body {
+    font-family: var(--font-inter);
+    background-color: #F5EFE6;
+    color: #2A1E17;
+  }
+
+  h1, h2, h3, h4, h5, h6, .font-display {
+    font-family: var(--font-space);
+  }
+
+  code, pre, .font-mono {
+    font-family: var(--font-mono);
+  }
+}
+
+/* Custom warm light brown scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #F5EFE6;
+}
+::-webkit-scrollbar-thumb {
+  background: #D8C8B5;
+  border-radius: 4px;
+  border: 1px solid rgba(166, 99, 43, 0.2);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #A6632B;
+}
+
+/* Custom warm glows & gradient utilities */
+.glow-gold {
+  box-shadow: 0 0 25px -5px rgba(166, 99, 43, 0.25);
+}
+
+.glow-amber {
+  box-shadow: 0 0 25px -5px rgba(199, 122, 56, 0.25);
+}
+
+.glow-gradient {
+  box-shadow: 0 8px 30px -5px rgba(140, 74, 27, 0.12), 0 0 20px -5px rgba(166, 99, 43, 0.15);
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, #2A1E17 20%, #A6632B 60%, #8C4A1B 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-gold {
+  background: linear-gradient(135deg, #8C4A1B 0%, #C77A38 50%, #A6632B 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.border-gradient-hover {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.border-gradient-hover::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(166, 99, 43, 0.4), rgba(199, 122, 56, 0.4));
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  opacity: 0.3;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.border-gradient-hover:hover::before {
+  opacity: 1;
+}
+
+
+
