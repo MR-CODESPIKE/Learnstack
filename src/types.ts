@@ -1,4 +1,4 @@
-export type TopicId = 'python' | 'javascript' | 'cpp' | 'ml' | 'dl' | 'neural-nets';
+export type TopicId = 'python-core' | 'python' | 'javascript' | 'html-css' | 'java' | 'cpp' | 'ml' | 'dl' | 'neural-nets';
 
 export interface TopicInfo {
   id: TopicId;

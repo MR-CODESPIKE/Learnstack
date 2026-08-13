@@ -1,136 +1,42 @@
-import React, { useState, useEffect } from 'react';
-import Navbar from './components/Navbar';
-import Hero from './components/Hero';
-import TopicPills from './components/TopicPills';
-import LessonsTrack from './components/LessonsTrack';
-import AiTutor from './components/AiTutor';
-import CodePlayground from './components/CodePlayground';
-import CodingChallenges from './components/CodingChallenges';
-import SimulatorsSection from './components/SimulatorsSection';
-import QuickNavDock from './components/QuickNavDock';
-import Footer from './components/Footer';
-import { TopicId } from './types';
-import { PYTHON_LESSONS } from './data/curriculumData';
+import React from 'react';
+import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
+import LandingPage from './pages/LandingPage';
+import CourseSelectionHub from './pages/CourseSelectionHub';
+import AppShell from './layouts/AppShell';
+import DashboardView from './pages/DashboardView';
+import LessonsView from './pages/LessonsView';
+import PlaygroundView from './pages/PlaygroundView';
+import SimulatorsView from './pages/SimulatorsView';
+import ChallengesView from './pages/ChallengesView';
+import AiTutorView from './pages/AiTutorView';
+import RoomsView from './pages/RoomsView';
 
 export default function App() {
-  const [selectedTopic, setSelectedTopic] = useState<TopicId>('python');
-  
-  // Persistence for completed lessons in localStorage
-  const [completedLessonIds, setCompletedLessonIds] = useState<string[]>(() => {
-    try {
-      const saved = localStorage.getItem('learnstack_completed_lessons');
-      return saved ? JSON.parse(saved) : ['py-01'];
-    } catch {
-      return ['py-01'];
-    }
-  });
-
-  const [playgroundCode, setPlaygroundCode] = useState<string | undefined>(undefined);
-  const [tutorQuestion, setTutorQuestion] = useState<string | undefined>(undefined);
-
-  useEffect(() => {
-    try {
-      localStorage.setItem('learnstack_completed_lessons', JSON.stringify(completedLessonIds));
-    } catch (e) {
-      console.error('Failed to save to localStorage', e);
-    }
-  }, [completedLessonIds]);
-
-  const handleToggleComplete = (id: string) => {
-    setCompletedLessonIds((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
-    );
-  };
-
-  const handleSendToPlayground = (code: string) => {
-    setPlaygroundCode(code);
-    const element = document.getElementById('playground');
-    if (element) {
-      const offset = 80;
-      const bodyRect = document.body.getBoundingClientRect().top;
-      const elementRect = element.getBoundingClientRect().top;
-      const elementPosition = elementRect - bodyRect;
-      const offsetPosition = elementPosition - offset;
-      window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-    }
-  };
-
-  const handleOpenTutorWithQuestion = (q: string) => {
-    setTutorQuestion(q);
-    const element = document.getElementById('tutor');
-    if (element) {
-      const offset = 80;
-      const bodyRect = document.body.getBoundingClientRect().top;
-      const elementRect = element.getBoundingClientRect().top;
-      const elementPosition = elementRect - bodyRect;
-      const offsetPosition = elementPosition - offset;
-      window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-    }
-  };
-
-  const scrollToTutor = () => {
-    const element = document.getElementById('tutor');
-    if (element) {
-      const offset = 80;
-      const bodyRect = document.body.getBoundingClientRect().top;
-      const elementRect = element.getBoundingClientRect().top;
-      const elementPosition = elementRect - bodyRect;
-      const offsetPosition = elementPosition - offset;
-      window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-[#F5EFE6] text-[#2A1E17] font-sans antialiased selection:bg-[#A6632B]/20 selection:text-[#8C4A1B]">
-      {/* Top Navbar */}
-      <Navbar
-        onOpenTutor={scrollToTutor}
-        completedCount={completedLessonIds.length}
-        totalLessons={PYTHON_LESSONS.length}
-      />
+    <HashRouter>
+      <Routes>
+        {/* 1. Landing Page (Entry for new/logged-out visitors with 3D Neural Hero) */}
+        <Route path="/" element={<LandingPage />} />
 
-      {/* Main Content Sections */}
-      <main>
-        {/* Hero Section with Signature 3D Neural Net */}
-        <Hero onOpenTutor={scrollToTutor} />
+        {/* 2. Dedicated Course Selection Hub */}
+        <Route path="/courses" element={<CourseSelectionHub />} />
 
-        {/* Topic Pills Row */}
-        <TopicPills
-          selectedTopic={selectedTopic}
-          onSelectTopic={(topicId) => setSelectedTopic(topicId)}
-        />
+        {/* 3. Persistent App Shell Scoped to Track */}
+        <Route path="/app/:trackId" element={<AppShell />}>
+          <Route index element={<Navigate to="dashboard" replace />} />
+          <Route path="dashboard" element={<DashboardView />} />
+          <Route path="lessons" element={<LessonsView />} />
+          <Route path="playground" element={<PlaygroundView />} />
+          <Route path="simulators" element={<SimulatorsView />} />
+          <Route path="challenges" element={<ChallengesView />} />
+          <Route path="tutor" element={<AiTutorView />} />
+          <Route path="rooms" element={<RoomsView />} />
+          <Route path="rooms/:roomId" element={<RoomsView />} />
+        </Route>
 
-        {/* Python Lessons Track Roadmap */}
-        <LessonsTrack
-          completedLessonIds={completedLessonIds}
-          onToggleComplete={handleToggleComplete}
-          onSendToPlayground={handleSendToPlayground}
-          onOpenTutorWithQuestion={handleOpenTutorWithQuestion}
-        />
-
-        {/* AI Tutor Chat Panel */}
-        <AiTutor initialQuestion={tutorQuestion} />
-
-        {/* Code Playground with Scroll Focus Zoom Transition */}
-        <CodePlayground initialCode={playgroundCode} />
-
-        {/* Coding Challenges with Automated Test Runner */}
-        <CodingChallenges
-          onSendToPlayground={handleSendToPlayground}
-          onOpenTutorWithQuestion={handleOpenTutorWithQuestion}
-        />
-
-        {/* Interactive Simulators (Neural Builder, Transformer, Sorting, 2D Net) */}
-        <SimulatorsSection onSendToPlayground={handleSendToPlayground} />
-      </main>
-
-      {/* Floating Quick Navigation Dock */}
-      <QuickNavDock onOpenTutor={scrollToTutor} />
-
-      {/* On-Brand Footer */}
-      <Footer />
-    </div>
+        {/* Fallback Catch-All */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </HashRouter>
   );
 }
-
-

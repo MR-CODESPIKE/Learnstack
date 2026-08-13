@@ -5,9 +5,10 @@ import HeroNeuralNet from './3d/HeroNeuralNet';
 
 interface HeroProps {
   onOpenTutor: () => void;
+  onStartLearning?: () => void;
 }
 
-export default function Hero({ onOpenTutor }: HeroProps) {
+export default function Hero({ onOpenTutor, onStartLearning }: HeroProps) {
   return (
     <section id="hero" className="relative pt-28 pb-16 lg:pt-36 lg:pb-24 overflow-hidden">
       {/* Decorative Background Image Overlay */}
@@ -55,13 +56,16 @@ export default function Hero({ onOpenTutor }: HeroProps) {
 
             {/* Action Buttons */}
             <div className="flex flex-wrap items-center gap-4 pt-2">
-              <a
-                href="#lessons"
-                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-gradient-to-r from-[#A6632B] via-[#C77A38] to-[#8C4A1B] text-white font-mono text-sm font-bold shadow-lg shadow-[#A6632B]/20 hover:shadow-[#A6632B]/40 hover:scale-[1.02] active:scale-[0.98] transition-all"
+              <button
+                onClick={onStartLearning ? onStartLearning : () => {
+                  const el = document.getElementById('lessons');
+                  if (el) el.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-gradient-to-r from-[#A6632B] via-[#C77A38] to-[#8C4A1B] text-white font-mono text-sm font-bold shadow-lg shadow-[#A6632B]/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
               >
-                <span>Explore Python Track</span>
+                <span>Start Learning & Course Hub</span>
                 <ArrowRight className="w-4 h-4" />
-              </a>
+              </button>
 
               <button
                 onClick={onOpenTutor}

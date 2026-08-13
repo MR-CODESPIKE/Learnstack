@@ -200,7 +200,7 @@ export default function HeroNeuralNet() {
   }, []);
 
   return (
-    <div className="relative w-full h-[380px] sm:h-[460px] lg:h-[520px] rounded-2xl bg-[#FAF4ED] border border-[#D6C5B3] backdrop-blur-sm overflow-hidden shadow-xl flex items-center justify-center group glow-gradient">
+    <div className="relative w-full h-[380px] sm:h-[460px] lg:h-[520px] rounded-3xl liquid-glass-dock overflow-hidden shadow-2xl flex items-center justify-center group">
       {/* Subtle Background Warm Glow */}
       <div className="absolute inset-0 bg-gradient-to-tr from-[#A6632B]/10 via-transparent to-[#8C4A1B]/10 pointer-events-none" />
       
