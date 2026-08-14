@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Outlet, useParams, useNavigate, useLocation, Link } from 'react-router-dom';
 import { ALL_TOPICS } from '../data/allCurriculumData';
 import { 
-  BrainCircuit, LayoutDashboard, BookOpen, Terminal, Cpu, Trophy, Sparkles, Users, 
+  BrainCircuit, LayoutDashboard, BookOpen, Terminal, Cpu, Trophy, Sparkles, Users, HelpCircle,
   ChevronDown, Menu, X, ArrowLeftRight, User, Award, Flame, Compass, ChevronRight, LogOut 
 } from 'lucide-react';
 
@@ -22,6 +22,7 @@ export default function AppShell() {
     if (path.includes('/lessons')) return 'Lessons Curriculum';
     if (path.includes('/playground')) return 'Code Playground IDE';
     if (path.includes('/simulators')) return '3D Interactive Simulators';
+    if (path.includes('/quizzes')) return 'Quiz Section';
     if (path.includes('/challenges')) return 'Coding Challenges & Tests';
     if (path.includes('/tutor')) return 'Gemini AI Tutor';
     if (path.includes('/rooms')) return 'Study Rooms & Group Chat';
@@ -33,6 +34,7 @@ export default function AppShell() {
     { id: 'lessons', label: 'Lessons', icon: BookOpen, path: `/app/${trackId}/lessons` },
     { id: 'playground', label: 'Playground', icon: Terminal, path: `/app/${trackId}/playground` },
     { id: 'simulators', label: 'Simulators', icon: Cpu, path: `/app/${trackId}/simulators` },
+    { id: 'quizzes', label: 'Quiz Section', icon: HelpCircle, path: `/app/${trackId}/quizzes` },
     { id: 'challenges', label: 'Challenges', icon: Trophy, path: `/app/${trackId}/challenges` },
     { id: 'tutor', label: 'AI Tutor', icon: Sparkles, path: `/app/${trackId}/tutor` },
     { id: 'rooms', label: 'Study Rooms', icon: Users, path: `/app/${trackId}/rooms` },

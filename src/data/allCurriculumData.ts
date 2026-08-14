@@ -7,6 +7,26 @@ export interface ExtendedTopicInfo extends TopicInfo {
 
 export const ALL_TOPICS: ExtendedTopicInfo[] = [
   {
+    id: 'ai-fundamentals',
+    name: 'AI & LLM Concepts (Beginner)',
+    tagline: 'Parameters, Temperature, RAG, Hallucination, Tokens & Prompts explained',
+    isLive: true,
+    iconName: 'BrainCircuit',
+    description: 'The ultimate essential starter course for AI: learn parameter counts (7B to 405B), sampling temperature, top-p, hallucinations, RAG (Vector Search), tokens, context windows, and fine-tuning vs prompting.',
+    estimatedHours: 8,
+    level: 'Beginner',
+    category: 'AI & ML',
+    colorGradient: 'from-amber-500/20 to-orange-500/20',
+    upcomingModules: [
+      '1. Tokens, Prompts & Model Architecture',
+      '2. Parameter Count & Model Size (7B - 405B)',
+      '3. Temperature, Top-P & Sampling Controls',
+      '4. Hallucination, Grounding & System Prompts',
+      '5. RAG (Retrieval-Augmented Generation) & Vectors',
+      '6. Fine-Tuning, LoRA & Prompt Engineering',
+    ],
+  },
+  {
     id: 'python-core',
     name: 'Standard Python',
     tagline: 'Standard Python 3 syntax, control flow, functions, OOP & files',
@@ -772,7 +792,269 @@ print(safe_divide(10, "two"))
   },
 ];
 
+export const AI_FUNDAMENTALS_LESSONS: Lesson[] = [
+  {
+    id: 'aifund-01',
+    title: '1. What is an LLM & Tokens Explained',
+    shortDesc: 'Demystify Large Language Models, how prompts turn into tokens (~0.75 words), and context windows.',
+    durationMinutes: 15,
+    level: 'Beginner',
+    topics: ['AI Basics', 'LLM', 'Tokens', 'Context Window'],
+    contentMarkdown: `### What is a Large Language Model (LLM)?
+
+A **Large Language Model (LLM)** is a statistical pattern-matching neural network trained on billions of text pages to predict the **most likely next token**.
+
+#### What is a Token?
+- AI models do not read raw words; they process **Tokens** (sub-word fragments).
+- **1 Token ≈ 4 characters** or **~0.75 English words**.
+- Example: The sentence \`"Artificial Intelligence is amazing!"\` is split into tokens like: \`["Artifi", "cial", " Intel", "ligence", " is", " amaz", "ing", "!"]\`.
+
+#### Context Window
+The **Context Window** is the maximum total token memory capacity (input prompt + output completion) an LLM can hold at once.
+- **8,000 tokens** ≈ ~6,000 words (~12 pages)
+- **128,000 tokens** ≈ ~96,000 words (a full book!)
+- **1,000,000+ tokens** ≈ ~750,000 words (an entire code repository!)`,
+    initialCode: `# Lesson 1: Token Estimator & Context Window Simulator
+def estimate_tokens(text_input):
+    character_count = len(text_input)
+    word_count = len(text_input.split())
+    # Standard heuristic: ~4 characters per token or ~1.33 tokens per word
+    estimated_tokens = max(1, int(character_count / 4))
+    return {
+        "words": word_count,
+        "chars": character_count,
+        "est_tokens": estimated_tokens
+    }
+
+prompt = "Large language models predict the next token based on learned probability distribution."
+res = estimate_tokens(prompt)
+
+print("Prompt Analysis:")
+print(f"Words: {res['words']} | Characters: {res['chars']}")
+print(f"Estimated Tokens: {res['est_tokens']}")
+print(f"Context Window Used (out of 128,000): {(res['est_tokens']/128000)*100:.4f}%")
+`,
+    expectedOutput: 'Estimated Tokens: 22',
+  },
+  {
+    id: 'aifund-02',
+    title: '2. Parameter Count & Model Scale (7B - 405B)',
+    shortDesc: 'Understand weights/parameters, model sizes (7B, 70B, 405B), and quantization (FP16, INT8, INT4).',
+    durationMinutes: 20,
+    level: 'Beginner',
+    topics: ['Parameters', '7B', '70B', 'Quantization', 'VRAM'],
+    contentMarkdown: `### What is a Model Parameter?
+
+A **Parameter** (or weight) is an adjustable numerical value inside an AI model's neural network learned during training.
+
+#### Common Model Sizes:
+- **7B (7 Billion parameters)**: Fast, lightweight, runs locally on a laptop/phone GPU (4GB - 8GB VRAM). Great for basic tasks & classification.
+- **70B (70 Billion parameters)**: Highly capable enterprise model. Requires multi-GPU servers (40GB - 80GB VRAM). High reasoning capability.
+- **405B+ (400B+ parameters)**: Frontier giant models. Requires server clusters. State-of-the-art coding, math, and multi-step logic.
+
+#### Quantization
+**Quantization** reduces model precision (e.g., from 16-bit float FP16 down to 8-bit INT8 or 4-bit INT4) to save 50-75% GPU memory with minimal quality loss!`,
+    initialCode: `# Lesson 2: GPU VRAM Memory Requirement Calculator
+def calculate_model_vram(params_in_billions, precision_bits=16):
+    # Base VRAM = (Parameters in Billions * (precision_bits / 8)) GB
+    base_vram = params_in_billions * (precision_bits / 8)
+    # Add ~20% overhead for context activation KV cache
+    recommended_vram = base_vram * 1.2
+    return round(base_vram, 2), round(recommended_vram, 2)
+
+models = [
+    ("Llama-3 8B (FP16)", 8, 16),
+    ("Llama-3 8B (4-bit INT4)", 8, 4),
+    ("Llama-3 70B (8-bit INT8)", 70, 8),
+    ("Frontier 405B (FP16)", 405, 16)
+]
+
+print("Model Scale & VRAM Requirements:")
+for name, params, bits in models:
+    base, rec = calculate_model_vram(params, bits)
+    print(f"{name:25} -> Base VRAM: {base:6.1f} GB | Rec. VRAM: {rec:6.1f} GB")
+`,
+    expectedOutput: 'Llama-3 8B (4-bit INT4)   -> Base VRAM:    4.0 GB | Rec. VRAM:    4.8 GB',
+  },
+  {
+    id: 'aifund-03',
+    title: '3. Temperature, Top-P & Sampling Controls',
+    shortDesc: 'Control randomness & creativity using Temperature (0.0 to 1.0), Top-P (Nucleus), and Top-K.',
+    durationMinutes: 20,
+    level: 'Beginner',
+    topics: ['Temperature', 'Top-P', 'Top-K', 'Sampling', 'Creativity'],
+    contentMarkdown: `### How Temperature & Top-P Control Output
+
+LLMs do not pick words at random; they generate a probability list for candidate next tokens. Sampling controls determine how that choice is made!
+
+#### 1. Temperature ($T$)
+- **$T = 0.0$ (Greedy Sampling)**: Always picks the #1 highest-probability token. 100% deterministic, perfect for math, coding, and factual extraction.
+- **$T = 0.7$ (Balanced)**: Adds moderate randomness. Great for natural conversation and general writing.
+- **$T = 1.0+$ (Creative / Unpredictable)**: Flattens probabilities so rare tokens get selected. Used for poetry, brainstorming, or fiction.
+
+#### 2. Top-P (Nucleus Sampling)
+Filters candidate tokens by cumulative probability percentage. E.g., \`Top-P = 0.9\` considers only the top candidate tokens whose combined probability equals 90%, cutting off unlikely tail words.`,
+    initialCode: `# Lesson 3: Temperature Softmax Probability Simulator
+import math
+
+def softmax_with_temperature(logits, temperature=1.0):
+    if temperature <= 0.001: # Greedy choice
+        max_idx = logits.index(max(logits))
+        return [1.0 if i == max_idx else 0.0 for i in range(len(logits))]
+    
+    # Scale logits by temperature T
+    scaled_logits = [l / temperature for l in logits]
+    exp_logits = [math.exp(l) for l in scaled_logits]
+    sum_exp = sum(exp_logits)
+    return [round(e / sum_exp, 4) for e in exp_logits]
+
+candidate_tokens = ["Code", "Program", "Script", "Banana"]
+raw_logits = [4.0, 3.2, 2.5, -1.0]
+
+print("Candidate Tokens:", candidate_tokens)
+print("Low Temp (T = 0.1, Coding):    ", softmax_with_temperature(raw_logits, 0.1))
+print("Med Temp (T = 0.7, Balanced):  ", softmax_with_temperature(raw_logits, 0.7))
+print("High Temp (T = 1.5, Creative): ", softmax_with_temperature(raw_logits, 1.5))
+`,
+    expectedOutput: 'Low Temp (T = 0.1, Coding):     [1.0, 0.0, 0.0, 0.0]',
+  },
+  {
+    id: 'aifund-04',
+    title: '4. Hallucination, Grounding & System Instructions',
+    shortDesc: 'Why AI hallucinates facts, how grounding prevents false answers, and system prompt guardrails.',
+    durationMinutes: 20,
+    level: 'Beginner',
+    topics: ['Hallucination', 'Grounding', 'System Prompt', 'Factuality'],
+    contentMarkdown: `### Why Do AI Models Hallucinate?
+
+**Hallucination** occurs when an AI model confidently generates false, unverified, or fabricated information.
+
+#### Why does it happen?
+1. **Next-Token Prediction**: The model calculates statistical plausibility, NOT factual database truth.
+2. **Missing Knowledge**: If the prompt asks about private or recent data not in training weights, the model fills in gaps plausibly.
+
+#### How to Prevent Hallucinations:
+- **Grounding**: Providing reliable reference documents inside the prompt.
+- **Low Temperature ($T \le 0.2$)**: Forces strict top predictions.
+- **System Instructions**: Adding guardrails like *"If you are uncertain or the information is not in the provided text, respond with 'I do not have enough information'."*`,
+    initialCode: `# Lesson 4: Grounding Guardrail Simulator
+def AI_Response_Generator(user_query, context_documents=None, allow_hallucination=False):
+    system_guardrail = "Answer ONLY using facts provided in context_documents. If unknown, say 'UNGROUNDED'."
+    
+    known_facts = {
+        "learnstack version": "LearnStack 2.0 released in 2026.",
+        "python core": "Standard Python 3 track covers loops, classes, and file I/O."
+    }
+    
+    query_lower = user_query.lower()
+    
+    # Check grounding
+    found_fact = None
+    for key, fact in known_facts.items():
+        if key in query_lower:
+            found_fact = fact
+            break
+            
+    if found_fact:
+        return f"[Grounded Result]: {found_fact}"
+    elif not allow_hallucination:
+        return "[Guardrail Triggered]: Information not found in grounded context. Refusing ungrounded guess."
+    else:
+        return "[Hallucinated Guess]: LearnStack was invented in 1842 by Charles Babbage!"
+
+print("Query 1:", AI_Response_Generator("Tell me about Python Core"))
+print("Query 2 (Grounded Guardrail):", AI_Response_Generator("Who won the 2028 World Cup?", allow_hallucination=False))
+print("Query 3 (Unguarded Model):   ", AI_Response_Generator("Who won the 2028 World Cup?", allow_hallucination=True))
+`,
+    expectedOutput: '[Guardrail Triggered]: Information not found in grounded context.',
+  },
+  {
+    id: 'aifund-05',
+    title: '5. RAG (Retrieval-Augmented Generation) & Vectors',
+    shortDesc: 'Connect LLMs to custom private data using text embeddings, vector databases, and similarity search.',
+    durationMinutes: 25,
+    level: 'Beginner',
+    topics: ['RAG', 'Embeddings', 'Vector Search', 'Cosine Distance'],
+    contentMarkdown: `### What is RAG (Retrieval-Augmented Generation)?
+
+**RAG** connects an LLM to external databases or private company documents without needing expensive re-training!
+
+#### The 3 Steps of RAG:
+1. **Chunking & Embedding**: Documents are broken into small text chunks and converted into numerical vector arrays (**Embeddings**).
+2. **Vector Retrieval**: When a user asks a question, a **Vector Database** calculates mathematical similarity (e.g. Cosine Similarity) to retrieve the top 3 most relevant document chunks.
+3. **Augmented Prompting**: The retrieved chunks are injected into the prompt as context before passing to the LLM.`,
+    initialCode: `# Lesson 5: Simplified Vector Similarity & RAG Pipeline
+import math
+
+def cosine_similarity(vec1, vec2):
+    dot_product = sum(a * b for a, b in zip(vec1, vec2))
+    norm1 = math.sqrt(sum(a * a for a in vec1))
+    norm2 = math.sqrt(sum(b * b for b in vec2))
+    return dot_product / (norm1 * norm2) if (norm1 * norm2) > 0 else 0
+
+# Mock Vector Embeddings (Topic Dimensions: [Python, Web, AI])
+query_vector = [0.9, 0.1, 0.8] # Query: "How to run Python AI models"
+
+knowledge_base = [
+    {"title": "Doc A: Python Loops & Conditionals", "vector": [0.85, 0.2, 0.1]},
+    {"title": "Doc B: HTML & CSS Responsive Layouts", "vector": [0.05, 0.95, 0.1]},
+    {"title": "Doc C: Building Neural Nets in PyTorch", "vector": [0.8, 0.1, 0.9]},
+]
+
+print("Vector Similarity Search (RAG Retrieval):")
+for doc in knowledge_base:
+    sim = cosine_similarity(query_vector, doc["vector"])
+    doc["similarity"] = sim
+    print(f"{doc['title']} -> Similarity Score: {sim:.4f}")
+
+top_doc = max(knowledge_base, key=lambda x: x["similarity"])
+print(f"\n[Retrieved Context for LLM]: {top_doc['title']}")
+`,
+    expectedOutput: 'Doc C: Building Neural Nets in PyTorch -> Similarity Score: 0.9982',
+  },
+  {
+    id: 'aifund-06',
+    title: '6. Fine-Tuning, LoRA & Prompt Engineering',
+    shortDesc: 'Learn when to use Zero-Shot, Few-Shot, Chain-of-Thought prompting vs Fine-Tuning (LoRA).',
+    durationMinutes: 20,
+    level: 'Beginner',
+    topics: ['Prompt Engineering', 'Zero-Shot', 'Few-Shot', 'CoT', 'Fine-Tuning', 'LoRA'],
+    contentMarkdown: `### Prompting vs Fine-Tuning
+
+#### Prompt Engineering Techniques:
+- **Zero-Shot**: Asking the model directly without examples (\`"Translate 'Hello' to Spanish"\`).
+- **Few-Shot**: Providing 2-3 input/output examples inside the prompt to guide formatting.
+- **Chain-of-Thought (CoT)**: Instructing the model to *"Think step-by-step before outputting the final answer"*, dramatically improving math and logical reasoning scores!
+
+#### Fine-Tuning & LoRA
+- **Fine-Tuning**: Modifying internal model weights on a targeted domain dataset.
+- **LoRA (Low-Rank Adaptation)**: Efficient fine-tuning that freeze the original model weights and trains a tiny 1% adapter layer, drastically cutting training costs!`,
+    initialCode: `# Lesson 6: Chain-of-Thought (CoT) Prompting Logic Simulator
+def evaluate_math_prompt(prompt_type, problem_text):
+    if prompt_type == "standard":
+        return f"Prompt: {problem_text}\nDirect AI Output: 42 (Uncertain guess without steps)"
+    elif prompt_type == "chain_of_thought":
+        reasoning_steps = [
+            "Step 1: Identify given quantities (A = 15, B = 3x A).",
+            "Step 2: Calculate B = 3 * 15 = 45.",
+            "Step 3: Subtract initial offset of 5 -> 45 - 5 = 40.",
+            "Final Answer: 40"
+        ]
+        return f"Prompt: {problem_text} [Let's think step by step]\n" + "\n".join(reasoning_steps)
+
+problem = "A store has 15 apples. B has 3 times more, then sells 5. How many are left?"
+print("--- Standard Prompting ---")
+print(evaluate_math_prompt("standard", problem))
+
+print("\n--- Chain-of-Thought (CoT) Prompting ---")
+print(evaluate_math_prompt("chain_of_thought", problem))
+`,
+    expectedOutput: 'Final Answer: 40',
+  },
+];
+
 export const LESSONS_BY_TRACK: Record<string, Lesson[]> = {
+  'ai-fundamentals': AI_FUNDAMENTALS_LESSONS,
   'python-core': PYTHON_CORE_LESSONS,
   'python': PYTHON_LESSONS,
   'javascript': JAVASCRIPT_LESSONS,

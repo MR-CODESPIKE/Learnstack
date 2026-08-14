@@ -7,6 +7,7 @@ import DashboardView from './pages/DashboardView';
 import LessonsView from './pages/LessonsView';
 import PlaygroundView from './pages/PlaygroundView';
 import SimulatorsView from './pages/SimulatorsView';
+import QuizView from './pages/QuizView';
 import ChallengesView from './pages/ChallengesView';
 import AiTutorView from './pages/AiTutorView';
 import RoomsView from './pages/RoomsView';
@@ -28,6 +29,7 @@ export default function App() {
           <Route path="lessons" element={<LessonsView />} />
           <Route path="playground" element={<PlaygroundView />} />
           <Route path="simulators" element={<SimulatorsView />} />
+          <Route path="quizzes" element={<QuizView />} />
           <Route path="challenges" element={<ChallengesView />} />
           <Route path="tutor" element={<AiTutorView />} />
           <Route path="rooms" element={<RoomsView />} />

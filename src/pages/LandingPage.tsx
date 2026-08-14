@@ -79,8 +79,28 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               
+              <div
+                onClick={() => navigate('/app/ai-fundamentals/dashboard')}
+                className="p-6 rounded-2xl liquid-glass-card border border-[#D6C5B3] hover:border-[#A6632B]/50 transition-all cursor-pointer group space-y-4 hover:shadow-xl hover:shadow-[#A6632B]/10"
+              >
+                <div className="w-12 h-12 rounded-xl bg-[#A6632B]/15 border border-[#A6632B]/30 flex items-center justify-center text-[#A6632B] group-hover:scale-110 transition-transform">
+                  <BrainCircuit className="w-6 h-6" />
+                </div>
+                <div>
+                  <div className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full liquid-glass-pill text-[#8C4A1B] inline-block mb-1">
+                    NEW STARTER TRACK
+                  </div>
+                  <h3 className="text-lg font-bold text-[#2A1E17] group-hover:text-[#A6632B] transition-colors">
+                    AI & LLM Concepts
+                  </h3>
+                  <p className="text-xs font-mono text-[#6E5D4F] mt-1.5 leading-relaxed">
+                    Master beginner AI concepts: Temperature, Parameter Count (7B-405B), Hallucinations, RAG, Tokens & Prompting.
+                  </p>
+                </div>
+              </div>
+
               <div
                 onClick={() => navigate('/courses')}
                 className="p-6 rounded-2xl liquid-glass-card border border-[#D6C5B3] hover:border-[#A6632B]/50 transition-all cursor-pointer group space-y-4 hover:shadow-xl hover:shadow-[#A6632B]/10"
@@ -90,7 +110,7 @@ export default function LandingPage() {
                 </div>
                 <div>
                   <h3 className="text-lg font-bold text-[#2A1E17] group-hover:text-[#A6632B] transition-colors">
-                    Structured Language Tracks
+                    Structured Code Tracks
                   </h3>
                   <p className="text-xs font-mono text-[#6E5D4F] mt-2 leading-relaxed">
                     Python, C++, JavaScript, Machine Learning, Deep Learning, and Neural Networks with runnable code cells.
@@ -124,7 +144,7 @@ export default function LandingPage() {
                 </div>
                 <div>
                   <h3 className="text-lg font-bold text-[#2A1E17] group-hover:text-[#8C4A1B] transition-colors">
-                    WhatsApp-Style Study Rooms
+                    WhatsApp Study Rooms
                   </h3>
                   <p className="text-xs font-mono text-[#6E5D4F] mt-2 leading-relaxed">
                     Collaborate in real-time group rooms, share syntax-highlighted code, voice notes, YouTube videos, and consult an inline Room AI Assistant.

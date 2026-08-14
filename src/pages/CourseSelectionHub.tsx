@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ALL_TOPICS, ExtendedTopicInfo } from '../data/allCurriculumData';
 import { 
   Code, Code2, Terminal, Layout, Coffee, Cpu, BrainCircuit, Layers, Network, 
-  ArrowRight, Sparkles, CheckCircle2, Clock, BookOpen, Search, Compass, ChevronRight 
+  ArrowRight, Sparkles, CheckCircle2, Clock, BookOpen, Search, Compass, ChevronRight, HelpCircle 
 } from 'lucide-react';
 
 const ICON_MAP: Record<string, React.ElementType> = {
@@ -45,7 +45,7 @@ export default function CourseSelectionHub() {
       <div className="absolute bottom-10 right-10 w-[550px] h-[550px] bg-gradient-to-br from-[#8C4A1B]/15 via-[#C77A38]/20 to-[#FAF4ED]/60 rounded-full animate-liquid-blob-delayed pointer-events-none" />
       
       {/* Top Bar Navigation */}
-      <header className="sticky top-0 z-50 bg-[#FAF4ED]/80 backdrop-blur-xl border-b border-[#D6C5B3] px-4 sm:px-8 py-4">
+      <header className="sticky top-0 z-50 liquid-glass border-b border-[#D6C5B3] px-4 sm:px-8 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}>
             <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#A6632B] via-[#C77A38] to-[#8C4A1B] p-0.5 shadow-md shadow-[#A6632B]/20">
@@ -57,7 +57,7 @@ export default function CourseSelectionHub() {
               <span className="text-xl font-display font-bold tracking-tight text-[#2A1E17]">
                 Learn<span className="text-gradient-gold">Stack</span>
               </span>
-              <span className="ml-2 text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#EFE5D9] border border-[#D6C5B3] text-[#8C4A1B]">
+              <span className="ml-2 text-[10px] font-mono font-bold px-2 py-0.5 rounded-full liquid-glass-pill text-[#8C4A1B]">
                 Course Hub
               </span>
             </div>
@@ -65,15 +65,22 @@ export default function CourseSelectionHub() {
 
           <div className="flex items-center gap-3">
             <button
+              onClick={() => navigate('/app/ai-fundamentals/quizzes')}
+              className="px-3.5 py-1.5 rounded-xl liquid-glass-pill hover:scale-105 text-xs font-mono text-[#2A1E17] transition-all flex items-center gap-2"
+            >
+              <HelpCircle className="w-4 h-4 text-[#A6632B]" />
+              <span>Quiz Section</span>
+            </button>
+            <button
               onClick={() => navigate('/app/python/simulators')}
-              className="px-3.5 py-1.5 rounded-xl bg-[#EFE5D9] hover:bg-[#E0D3C1] border border-[#D6C5B3] text-xs font-mono text-[#2A1E17] transition-all flex items-center gap-2"
+              className="px-3.5 py-1.5 rounded-xl liquid-glass-pill hover:scale-105 text-xs font-mono text-[#2A1E17] transition-all flex items-center gap-2"
             >
               <Cpu className="w-4 h-4 text-[#A6632B]" />
               <span>3D Simulators</span>
             </button>
             <button
               onClick={() => navigate('/app/python/rooms')}
-              className="px-3.5 py-1.5 rounded-xl bg-[#EFE5D9] hover:bg-[#E0D3C1] border border-[#D6C5B3] text-xs font-mono text-[#2A1E17] transition-all flex items-center gap-2"
+              className="px-3.5 py-1.5 rounded-xl liquid-glass-pill hover:scale-105 text-xs font-mono text-[#2A1E17] transition-all flex items-center gap-2"
             >
               <Sparkles className="w-4 h-4 text-[#8C4A1B]" />
               <span>Study Rooms</span>
@@ -83,11 +90,11 @@ export default function CourseSelectionHub() {
       </header>
 
       {/* Main Container */}
-      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10 w-full">
+      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10 w-full relative z-10">
         
         {/* Header Title & Description */}
         <div className="text-center space-y-4 max-w-3xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#EFE5D9] border border-[#D6C5B3] text-xs font-mono text-[#8C4A1B] font-semibold">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full liquid-glass-pill text-xs font-mono text-[#8C4A1B] font-semibold">
             <Compass className="w-3.5 h-3.5 text-[#A6632B]" />
             <span>Interactive Learning Pathways</span>
           </div>
@@ -100,7 +107,7 @@ export default function CourseSelectionHub() {
         </div>
 
         {/* Filters & Search Toolbar */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-[#FAF4ED] p-2 sm:p-3 rounded-2xl border border-[#D6C5B3]">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 liquid-glass-dock p-2.5 sm:p-3.5 rounded-2xl">
           
           {/* Category Tabs */}
           <div className="flex items-center gap-1.5 w-full sm:w-auto">
@@ -111,7 +118,7 @@ export default function CourseSelectionHub() {
                 className={`flex-1 sm:flex-none px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all ${
                   selectedCategory === cat
                     ? 'bg-gradient-to-r from-[#A6632B] via-[#C77A38] to-[#8C4A1B] text-white shadow-md'
-                    : 'text-[#6E5D4F] hover:text-[#2A1E17] hover:bg-[#EFE5D9]'
+                    : 'text-[#6E5D4F] hover:text-[#2A1E17] hover:bg-[#EFE5D9]/60'
                 }`}
               >
                 {cat}
@@ -126,8 +133,8 @@ export default function CourseSelectionHub() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search Python, Neural Nets, C++..."
-              className="w-full pl-10 pr-4 py-2 rounded-xl bg-[#F5EFE6] border border-[#D6C5B3] text-xs font-mono text-[#2A1E17] placeholder-[#6E5D4F]/60 focus:outline-none focus:border-[#A6632B]"
+              placeholder="Search Python, Temperature, RAG..."
+              className="w-full pl-10 pr-4 py-2 rounded-xl liquid-glass-pill text-xs font-mono text-[#2A1E17] placeholder-[#6E5D4F]/60 focus:outline-none focus:border-[#A6632B]"
             />
           </div>
         </div>
