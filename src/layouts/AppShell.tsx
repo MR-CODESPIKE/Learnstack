@@ -1,19 +1,30 @@
 import React, { useState } from 'react';
 import { Outlet, useParams, useNavigate, useLocation, Link } from 'react-router-dom';
-import { ALL_TOPICS } from '../data/allCurriculumData';
+import { useAuth } from '../contexts/AuthContext';
+import { useCoursesQuery } from '../hooks/useCourseQueries';
+import AuthModal from '../components/AuthModal';
 import { 
   BrainCircuit, LayoutDashboard, BookOpen, Terminal, Cpu, Trophy, Sparkles, Users, HelpCircle,
-  ChevronDown, Menu, X, ArrowLeftRight, User, Award, Flame, Compass, ChevronRight, LogOut 
+  ChevronDown, Menu, X, ArrowLeftRight, User, Award, Flame, Compass, ChevronRight, LogOut, LogIn 
 } from 'lucide-react';
 
 export default function AppShell() {
-  const { trackId = 'python' } = useParams<{ trackId: string }>();
+  const { trackId = 'ai-fundamentals' } = useParams<{ trackId: string }>();
   const navigate = useNavigate();
   const location = useLocation();
+  const { user, signOut } = useAuth();
+
+  const { data: courses = [] } = useCoursesQuery();
+
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [trackDropdownOpen, setTrackDropdownOpen] = useState(false);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
 
-  const currentTrack = ALL_TOPICS.find((t) => t.id === trackId) || ALL_TOPICS[0];
+  const currentTrack = courses.find((t) => t.id === trackId) || {
+    id: trackId,
+    name: trackId.toUpperCase(),
+    level: 'Beginner',
+  };
 
   // Map sub-paths to readable breadcrumbs
   const getBreadcrumb = () => {
@@ -52,7 +63,7 @@ export default function AppShell() {
             </div>
           </div>
           <span className="font-display font-bold text-sm text-[#2A1E17]">LearnStack</span>
-          <span className="text-[10px] font-mono text-[#8C4A1B] liquid-glass-pill px-2 py-0.5 rounded-full">
+          <span className="text-[10px] font-mono text-[#8C4A1B] liquid-glass-pill px-2 py-0.5 rounded-full truncate max-w-[100px]">
             {currentTrack.name}
           </span>
         </div>
@@ -124,9 +135,9 @@ export default function AppShell() {
 
             {/* Quick Track Switcher Dropdown */}
             {trackDropdownOpen && (
-              <div className="absolute top-full left-4 right-4 mt-2 bg-[#FAF4ED] border border-[#D6C5B3] rounded-xl shadow-2xl z-50 p-1.5 space-y-1">
+              <div className="absolute top-full left-4 right-4 mt-2 bg-[#FAF4ED] border border-[#D6C5B3] rounded-xl shadow-2xl z-50 p-1.5 space-y-1 max-h-60 overflow-y-auto">
                 <div className="text-[10px] font-mono text-[#6E5D4F] px-2.5 py-1">Switch Track:</div>
-                {ALL_TOPICS.map((t) => (
+                {courses.map((t) => (
                   <button
                     key={t.id}
                     onClick={() => {
@@ -141,7 +152,7 @@ export default function AppShell() {
                     }`}
                   >
                     <span className="truncate">{t.name}</span>
-                    <span className="text-[9px] text-[#6E5D4F]">{t.level}</span>
+                    <span className="text-[9px] opacity-75">{t.level}</span>
                   </button>
                 ))}
                 <div className="border-t border-[#D6C5B3] pt-1">
@@ -188,26 +199,35 @@ export default function AppShell() {
 
           {/* User Profile Progress Card in Sidebar Footer */}
           <div className="p-4 border-t border-[#D6C5B3] bg-[#EFE5D9]/60">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-[#A6632B] to-[#C77A38] p-0.5 shrink-0">
-                <img
-                  src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80"
-                  alt="Student Avatar"
-                  className="w-full h-full rounded-full object-cover"
-                />
-              </div>
-
-              <div className="flex-1 overflow-hidden">
-                <div className="text-xs font-bold text-[#2A1E17] truncate">Student Scholar</div>
-                <div className="flex items-center gap-2 text-[10px] font-mono text-[#6E5D4F] mt-0.5">
-                  <span className="text-[#A6632B] font-bold flex items-center gap-0.5">
-                    <Flame className="w-3 h-3 fill-current" /> 5 Days
-                  </span>
-                  <span>•</span>
-                  <span className="text-[#8C4A1B] font-bold">340 XP</span>
+            {user ? (
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2.5 overflow-hidden">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#A6632B] to-[#8C4A1B] text-white font-bold text-xs flex items-center justify-center shrink-0 shadow">
+                    {user.email?.charAt(0).toUpperCase() || 'U'}
+                  </div>
+                  <div className="truncate">
+                    <div className="text-xs font-bold text-[#2A1E17] truncate">{user.email?.split('@')[0]}</div>
+                    <div className="text-[10px] font-mono text-emerald-800 font-semibold">Logged In</div>
+                  </div>
                 </div>
+
+                <button
+                  onClick={() => signOut()}
+                  className="p-1.5 rounded-lg hover:bg-rose-500/20 text-rose-700 transition-colors"
+                  title="Sign Out"
+                >
+                  <LogOut className="w-4 h-4" />
+                </button>
               </div>
-            </div>
+            ) : (
+              <button
+                onClick={() => setAuthModalOpen(true)}
+                className="w-full py-2 px-3 rounded-xl bg-gradient-to-r from-[#A6632B] via-[#C77A38] to-[#8C4A1B] text-white text-xs font-mono font-bold shadow hover:scale-[1.02] transition-all flex items-center justify-center gap-2"
+              >
+                <LogIn className="w-4 h-4" />
+                <span>Sign In / Sign Up</span>
+              </button>
+            )}
           </div>
 
         </div>
@@ -223,37 +243,49 @@ export default function AppShell() {
           <div className="flex items-center gap-2 text-xs font-mono">
             <span
               onClick={() => navigate('/courses')}
-              className="text-[#6E5D4F] hover:text-[#2A1E17] cursor-pointer transition-colors"
+              className="text-[#6E5D4F] hover:text-[#2A1E17] cursor-pointer transition-colors hidden sm:inline"
             >
               Courses
             </span>
-            <ChevronRight className="w-3.5 h-3.5 text-[#8C4A1B]" />
-            <span className="text-[#A6632B] font-bold">{currentTrack.name}</span>
+            <ChevronRight className="w-3.5 h-3.5 text-[#8C4A1B] hidden sm:inline" />
+            <span className="text-[#A6632B] font-bold truncate max-w-[120px] sm:max-w-none">{currentTrack.name}</span>
             <ChevronRight className="w-3.5 h-3.5 text-[#8C4A1B]" />
             <span className="text-[#2A1E17] font-bold bg-[#EFE5D9] px-2.5 py-1 rounded-md border border-[#D6C5B3]">
               {getBreadcrumb()}
             </span>
           </div>
 
-          {/* Topbar Actions & User Avatar */}
-          <div className="flex items-center gap-4">
+          {/* Topbar Actions & Auth */}
+          <div className="flex items-center gap-3">
             
-            {/* Track Progress Badge */}
-            <div className="hidden sm:flex items-center gap-2 bg-[#EFE5D9] px-3 py-1.5 rounded-xl border border-[#D6C5B3] text-xs font-mono">
-              <Award className="w-4 h-4 text-[#A6632B]" />
-              <span className="text-[#6E5D4F]">Track Progress:</span>
-              <span className="text-[#2A1E17] font-bold">40%</span>
-              <div className="w-16 h-1.5 bg-[#D6C5B3] rounded-full overflow-hidden ml-1">
-                <div className="h-full bg-gradient-to-r from-[#A6632B] to-[#C77A38] rounded-full w-[40%]" />
+            {user ? (
+              <div className="flex items-center gap-2">
+                <span className="hidden md:inline text-xs font-mono text-[#6E5D4F]">
+                  {user.email}
+                </span>
+                <button
+                  onClick={() => signOut()}
+                  className="p-1.5 rounded-lg bg-[#EFE5D9] hover:bg-rose-500/20 text-rose-800 transition-colors text-xs font-mono flex items-center gap-1 border border-[#D6C5B3]"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">Sign Out</span>
+                </button>
               </div>
-            </div>
+            ) : (
+              <button
+                onClick={() => setAuthModalOpen(true)}
+                className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-[#A6632B] via-[#C77A38] to-[#8C4A1B] text-white text-xs font-mono font-bold shadow hover:scale-105 transition-all flex items-center gap-1.5"
+              >
+                <LogIn className="w-3.5 h-3.5" />
+                <span>Sign In</span>
+              </button>
+            )}
 
-            {/* Switch Course Shortcut */}
             <button
               onClick={() => navigate('/courses')}
-              className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-[#A6632B] via-[#C77A38] to-[#8C4A1B] text-white text-xs font-mono font-bold shadow-md hover:scale-105 transition-all flex items-center gap-1.5"
+              className="px-3 py-1.5 rounded-xl bg-[#EFE5D9] hover:bg-[#E0D3C1] text-[#2A1E17] text-xs font-mono font-bold border border-[#D6C5B3] transition-all flex items-center gap-1.5"
             >
-              <Compass className="w-3.5 h-3.5" />
+              <Compass className="w-3.5 h-3.5 text-[#A6632B]" />
               <span className="hidden md:inline">Course Hub</span>
             </button>
 
@@ -267,6 +299,12 @@ export default function AppShell() {
         </main>
 
       </div>
+
+      {/* Auth Modal */}
+      <AuthModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+      />
 
     </div>
   );

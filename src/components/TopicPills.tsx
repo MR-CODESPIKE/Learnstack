@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { TOPICS } from '../data/curriculumData';
-import { TopicInfo, TopicId } from '../types';
+import { useCoursesQuery } from '../hooks/useCourseQueries';
+import { DbCourse } from '../services/courseService';
+import { TopicId } from '../types';
 import { Code2, Terminal, Cpu, BrainCircuit, Layers, Network, Lock, Bell, Check, Sparkles, ArrowRight } from 'lucide-react';
 
 interface TopicPillsProps {
@@ -19,12 +20,13 @@ const ICON_MAP: Record<string, React.ReactNode> = {
 };
 
 export default function TopicPills({ selectedTopic, onSelectTopic }: TopicPillsProps) {
-  const [activePreview, setActivePreview] = useState<TopicInfo | null>(null);
+  const { data: courses = [] } = useCoursesQuery();
+  const [activePreview, setActivePreview] = useState<DbCourse | null>(null);
   const [notifiedTopics, setNotifiedTopics] = useState<Record<string, boolean>>({});
 
-  const handlePillClick = (topic: TopicInfo) => {
-    if (topic.isLive) {
-      onSelectTopic(topic.id);
+  const handlePillClick = (topic: DbCourse) => {
+    if (topic.is_live) {
+      onSelectTopic(topic.id as TopicId);
       setActivePreview(null);
     } else {
       setActivePreview(topic);
@@ -51,35 +53,35 @@ export default function TopicPills({ selectedTopic, onSelectTopic }: TopicPillsP
           </div>
           <div className="text-xs font-mono text-[#6E5D4F] flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-[#A6632B] animate-pulse" />
-            <span>Python Track is Live • Others Available for Early Preview</span>
+            <span>Supabase Live Tracks</span>
           </div>
         </div>
 
         {/* Topic Pills Grid */}
         <div className="flex flex-wrap items-center gap-3">
-          {TOPICS.map((topic) => {
+          {courses.map((topic) => {
             const isSelected = selectedTopic === topic.id;
-            const icon = ICON_MAP[topic.iconName] || <Code2 className="w-4 h-4" />;
+            const icon = ICON_MAP[topic.icon_name] || <Code2 className="w-4 h-4" />;
 
             return (
               <button
                 key={topic.id}
                 onClick={() => handlePillClick(topic)}
                 className={`relative px-4 py-2.5 rounded-xl font-mono text-xs font-medium flex items-center gap-2.5 transition-all duration-200 ${
-                  topic.isLive
+                  topic.is_live
                     ? isSelected
                       ? 'bg-gradient-to-r from-[#A6632B] via-[#C77A38] to-[#8C4A1B] text-white font-bold shadow-md scale-[1.02]'
                       : 'liquid-glass-card text-[#2A1E17]'
                     : 'liquid-glass-pill text-[#6E5D4F] hover:text-[#2A1E17]'
                 }`}
               >
-                <span className={topic.isLive ? (isSelected ? 'text-white' : 'text-[#A6632B]') : 'text-[#6E5D4F]'}>
+                <span className={topic.is_live ? (isSelected ? 'text-white' : 'text-[#A6632B]') : 'text-[#6E5D4F]'}>
                   {icon}
                 </span>
                 <span>{topic.name}</span>
 
                 {/* Status Badge */}
-                {topic.isLive ? (
+                {topic.is_live ? (
                   <span className={`px-1.5 py-0.5 rounded text-[10px] uppercase font-bold tracking-wider ${
                     isSelected ? 'bg-white/20 text-white' : 'bg-[#A6632B]/15 text-[#A6632B]'
                   }`}>
@@ -115,7 +117,7 @@ export default function TopicPills({ selectedTopic, onSelectTopic }: TopicPillsP
                         Upcoming Track Preview
                       </span>
                       <span className="text-xs font-mono text-[#6E5D4F]">
-                        Level: <strong className="text-[#2A1E17]">{activePreview.level}</strong> • Est: <strong className="text-[#2A1E17]">{activePreview.estimatedHours} hrs</strong>
+                        Level: <strong className="text-[#2A1E17]">{activePreview.level}</strong> • Est: <strong className="text-[#2A1E17]">{activePreview.estimated_hours} hrs</strong>
                       </span>
                     </div>
 
@@ -128,16 +130,18 @@ export default function TopicPills({ selectedTopic, onSelectTopic }: TopicPillsP
                     </p>
 
                     {/* Upcoming Curriculum Outline */}
-                    <div className="pt-2">
-                      <div className="text-xs font-mono text-[#A6632B] font-bold uppercase tracking-wider mb-2">Planned Modules:</div>
-                      <div className="flex flex-wrap gap-2">
-                        {activePreview.upcomingModules.map((mod, idx) => (
-                          <span key={idx} className="px-2.5 py-1 rounded-lg bg-[#EFE5D9] border border-[#D6C5B3] font-mono text-xs text-[#2A1E17]">
-                            {idx + 1}. {mod}
-                          </span>
-                        ))}
+                    {activePreview.upcoming_modules && activePreview.upcoming_modules.length > 0 && (
+                      <div className="pt-2">
+                        <div className="text-xs font-mono text-[#A6632B] font-bold uppercase tracking-wider mb-2">Planned Modules:</div>
+                        <div className="flex flex-wrap gap-2">
+                          {activePreview.upcoming_modules.map((mod, idx) => (
+                            <span key={idx} className="px-2.5 py-1 rounded-lg bg-[#EFE5D9] border border-[#D6C5B3] font-mono text-xs text-[#2A1E17]">
+                              {idx + 1}. {mod}
+                            </span>
+                          ))}
+                        </div>
                       </div>
-                    </div>
+                    )}
                   </div>
 
                   {/* Actions inside Preview */}
@@ -166,12 +170,12 @@ export default function TopicPills({ selectedTopic, onSelectTopic }: TopicPillsP
 
                     <button
                       onClick={() => {
-                        onSelectTopic('python');
+                        onSelectTopic('ai-fundamentals' as TopicId);
                         setActivePreview(null);
                       }}
                       className="w-full py-2.5 px-4 rounded-xl bg-[#EFE5D9] hover:bg-[#E0D3C1] border border-[#D6C5B3] text-[#8C4A1B] font-mono text-xs font-semibold flex items-center justify-center gap-2 transition-all"
                     >
-                      <span>Jump to Live Python Track</span>
+                      <span>Jump to Live AI Track</span>
                       <ArrowRight className="w-3.5 h-3.5" />
                     </button>
 

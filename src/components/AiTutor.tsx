@@ -14,12 +14,13 @@ export default function AiTutor({ initialQuestion, isOpenInline = true, onClose 
     {
       id: 'm-1',
       role: 'model',
-      text: "👋 Welcome to **LearnStack AI Tutor**! I'm your dedicated assistant for software engineering, computer science, machine learning, and deep neural networks. Ask me anything or select a topic chip below!",
+      text: "👋 Welcome to **LearnStack AI Tutor**! I'm your dedicated assistant powered by **Mistral AI (Primary)** with **Gemini (Fallback)**. Ask me anything or select a topic chip below!",
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     },
   ]);
 
   const [inputPrompt, setInputPrompt] = useState('');
+  const [selectedProvider, setSelectedProvider] = useState<'auto' | 'gemini' | 'mistral'>('auto');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -63,6 +64,7 @@ export default function AiTutor({ initialQuestion, isOpenInline = true, onClose 
         body: JSON.stringify({
           messages: historyPayload,
           topic: 'Computer Science & Neural Networks',
+          provider: selectedProvider,
         }),
       });
 
@@ -107,12 +109,29 @@ export default function AiTutor({ initialQuestion, isOpenInline = true, onClose 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
         
         {/* Tutor Section Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#EFE5D9] border border-[#D6C5B3] text-xs font-mono text-[#8C4A1B] font-semibold">
-              <Sparkles className="w-3.5 h-3.5 text-[#A6632B] animate-pulse" />
-              <span>Gemini 3.6 AI Assistant</span>
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#EFE5D9] border border-[#D6C5B3] text-xs font-mono text-[#8C4A1B] font-semibold">
+                <Sparkles className="w-3.5 h-3.5 text-[#A6632B] animate-pulse" />
+                <span>Multi-LLM AI Engine</span>
+              </div>
+              
+              {/* Provider Selector Dropdown */}
+              <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FAF4ED] border border-[#D6C5B3] text-xs font-mono text-[#2A1E17]">
+                <span className="text-[#6E5D4F]">Model:</span>
+                <select
+                  value={selectedProvider}
+                  onChange={(e) => setSelectedProvider(e.target.value as any)}
+                  className="bg-transparent font-bold text-[#8C4A1B] focus:outline-none cursor-pointer"
+                >
+                  <option value="auto">Auto (Gemini & Mistral)</option>
+                  <option value="gemini">Google Gemini 3.6 Flash</option>
+                  <option value="mistral">Mistral AI (Small & Codestral)</option>
+                </select>
+              </div>
             </div>
+
             <h2 className="text-2xl sm:text-3xl font-display font-bold text-[#2A1E17]">
               Interactive AI Tutor
             </h2>

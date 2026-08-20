@@ -13,7 +13,7 @@ export interface RoomMessage {
   senderAvatar: string;
   senderRole: 'admin' | 'member' | 'ai';
   timestamp: string;
-  type: 'text' | 'code' | 'video' | 'voice';
+  type: 'text' | 'code' | 'video' | 'voice' | 'file';
   content: string; // Plain text or description
   codeData?: {
     language: string;

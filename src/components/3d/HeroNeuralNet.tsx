@@ -20,7 +20,7 @@ interface Pulse3D {
   speed: number;
 }
 
-function NeuralNetworkScene({ isReducedMotion }: { isReducedMotion: boolean }) {
+function NeuralNetworkScene({ isReducedMotion, isVisible }: { isReducedMotion: boolean; isVisible: boolean }) {
   const groupRef = useRef<THREE.Group>(null);
   const pulsesRef = useRef<Pulse3D[]>([]);
 
@@ -38,8 +38,7 @@ function NeuralNetworkScene({ isReducedMotion }: { isReducedMotion: boolean }) {
 
       for (let i = 0; i < count; i++) {
         const y = startY + i * spacing;
-        // Subtle depth jitter
-        const z = (Math.sin(layerIdx * 2 + i * 1.5) * 0.4);
+        const z = Math.sin(layerIdx * 2 + i * 1.5) * 0.4;
         generatedNodes.push({
           id: `l${layerIdx}-n${i}`,
           position: [x, y, z],
@@ -48,7 +47,6 @@ function NeuralNetworkScene({ isReducedMotion }: { isReducedMotion: boolean }) {
       }
     });
 
-    // Connect layer i to layer i + 1
     for (let l = 0; l < layerSizes.length - 1; l++) {
       const currentLayerNodes = generatedNodes.filter((n) => n.layer === l);
       const nextLayerNodes = generatedNodes.filter((n) => n.layer === l + 1);
@@ -69,7 +67,7 @@ function NeuralNetworkScene({ isReducedMotion }: { isReducedMotion: boolean }) {
   // Initialize pulses traveling along random connections
   useEffect(() => {
     const initialPulses: Pulse3D[] = [];
-    for (let i = 0; i < 8; i++) {
+    for (let i = 0; i < 6; i++) {
       const randomConn = connections[Math.floor(Math.random() * connections.length)];
       initialPulses.push({
         from: randomConn.from,
@@ -81,36 +79,39 @@ function NeuralNetworkScene({ isReducedMotion }: { isReducedMotion: boolean }) {
     pulsesRef.current = initialPulses;
   }, [connections]);
 
-  // Track mouse coordinates for subtle parallax tilt
   const mousePos = useRef({ x: 0, y: 0 });
   useEffect(() => {
+    let ticking = false;
     const handleMouseMove = (e: MouseEvent) => {
-      const x = (e.clientX / window.innerWidth) * 2 - 1;
-      const y = -(e.clientY / window.innerHeight) * 2 + 1;
-      mousePos.current = { x, y };
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const x = (e.clientX / window.innerWidth) * 2 - 1;
+          const y = -(e.clientY / window.innerHeight) * 2 + 1;
+          mousePos.current = { x, y };
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
-    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
-  // Pulse meshes ref
   const pulseMeshRefs = useRef<(THREE.Mesh | null)[]>([]);
 
   useFrame((state, delta) => {
-    if (!groupRef.current) return;
+    // Skip calculations completely if canvas is scrolled off-screen
+    if (!groupRef.current || !isVisible) return;
 
-    // Gentle rotation if motion is not reduced
     if (!isReducedMotion) {
-      groupRef.current.rotation.y += delta * 0.15;
+      groupRef.current.rotation.y += delta * 0.12;
       
-      // Parallax mouse tilt
-      const targetRotX = mousePos.current.y * 0.2;
-      const targetRotZ = -mousePos.current.x * 0.15;
+      const targetRotX = mousePos.current.y * 0.15;
+      const targetRotZ = -mousePos.current.x * 0.12;
       groupRef.current.rotation.x += (targetRotX - groupRef.current.rotation.x) * 0.05;
       groupRef.current.rotation.z += (targetRotZ - groupRef.current.rotation.z) * 0.05;
     }
 
-    // Update pulse positions along connection vectors
     pulsesRef.current.forEach((pulse, idx) => {
       pulse.progress += pulse.speed;
       if (pulse.progress >= 1) {
@@ -129,13 +130,11 @@ function NeuralNetworkScene({ isReducedMotion }: { isReducedMotion: boolean }) {
     });
   });
 
-  // Prepare line objects
   const lineObjects = useMemo(() => {
     const mat = new THREE.LineBasicMaterial({
       color: '#A6632B',
       transparent: true,
       opacity: 0.35,
-      linewidth: 1,
     });
     return connections.map((c) => {
       const points = [new THREE.Vector3(...c.from), new THREE.Vector3(...c.to)];
@@ -146,40 +145,34 @@ function NeuralNetworkScene({ isReducedMotion }: { isReducedMotion: boolean }) {
 
   return (
     <group ref={groupRef}>
-      {/* Connection Lines */}
       {lineObjects.map((lineObj, idx) => (
         <primitive key={`line-${idx}`} object={lineObj} />
       ))}
 
-      {/* Nodes */}
       {nodes.map((node) => {
-        // Warm brown palette: output terracotta, hidden amber bronze & mahogany
         const isOutput = node.layer === 3;
         const color = isOutput ? '#C77A38' : node.layer === 0 ? '#8C4A1B' : '#A6632B';
         
         return (
           <group key={node.id} position={node.position}>
-            {/* Inner Glowing Sphere */}
             <mesh>
-              <sphereGeometry args={[0.22, 24, 24]} />
+              <sphereGeometry args={[0.22, 12, 12]} />
               <meshBasicMaterial color={color} />
             </mesh>
-            {/* Outer Aura Halo */}
             <mesh>
-              <sphereGeometry args={[0.34, 16, 16]} />
-              <meshBasicMaterial color={color} transparent opacity={0.25} />
+              <sphereGeometry args={[0.32, 10, 10]} />
+              <meshBasicMaterial color={color} transparent opacity={0.2} />
             </mesh>
           </group>
         );
       })}
 
-      {/* Traveling Signal Pulse Particles */}
       {pulsesRef.current.map((_, idx) => (
         <mesh
           key={`pulse-${idx}`}
           ref={(el) => (pulseMeshRefs.current[idx] = el)}
         >
-          <sphereGeometry args={[0.08, 12, 12]} />
+          <sphereGeometry args={[0.08, 8, 8]} />
           <meshBasicMaterial color="#8C4A1B" />
         </mesh>
       ))}
@@ -189,6 +182,8 @@ function NeuralNetworkScene({ isReducedMotion }: { isReducedMotion: boolean }) {
 
 export default function HeroNeuralNet() {
   const [isReducedMotion, setIsReducedMotion] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -199,26 +194,37 @@ export default function HeroNeuralNet() {
     return () => mediaQuery.removeEventListener('change', handleChange);
   }, []);
 
+  // IntersectionObserver to pause rendering when off-screen
+  useEffect(() => {
+    if (!containerRef.current) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting);
+      },
+      { threshold: 0.1 }
+    );
+    observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <div className="relative w-full h-[380px] sm:h-[460px] lg:h-[520px] rounded-3xl liquid-glass-dock overflow-hidden shadow-2xl flex items-center justify-center group">
-      {/* Subtle Background Warm Glow */}
+    <div ref={containerRef} className="relative w-full h-[380px] sm:h-[460px] lg:h-[520px] rounded-3xl liquid-glass-dock overflow-hidden shadow-2xl flex items-center justify-center group">
       <div className="absolute inset-0 bg-gradient-to-tr from-[#A6632B]/10 via-transparent to-[#8C4A1B]/10 pointer-events-none" />
       
-      {/* 3D Canvas */}
       <Canvas
         camera={{ position: [0, 0, 7], fov: 50 }}
         style={{ width: '100%', height: '100%' }}
-        dpr={[1, 2]}
+        dpr={[1, 1.25]}
+        gl={{ powerPreference: 'high-performance', antialias: true }}
       >
         <ambientLight intensity={0.8} />
         <directionalLight position={[10, 10, 5]} intensity={1.2} />
-        <NeuralNetworkScene isReducedMotion={isReducedMotion} />
+        <NeuralNetworkScene isReducedMotion={isReducedMotion} isVisible={isVisible} />
       </Canvas>
 
-      {/* Overlay Badge */}
       <div className="absolute bottom-4 left-4 sm:left-6 px-3 py-1.5 rounded-lg bg-[#F5EFE6]/90 border border-[#D6C5B3] text-xs font-mono text-[#6E5D4F] flex items-center gap-2 backdrop-blur-md shadow-sm">
         <span className="w-2 h-2 rounded-full bg-[#A6632B] animate-pulse" />
-        <span>3D Neural Net Simulation • R3F</span>
+        <span>3D Neural Net Simulation • R3F Optimized</span>
       </div>
     </div>
   );

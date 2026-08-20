@@ -18,7 +18,7 @@ export default function LessonsTrack({
   onSendToPlayground,
   onOpenTutorWithQuestion,
 }: LessonsTrackProps) {
-  const [activeLesson, setActiveLesson] = useState<Lesson | null>(null);
+  const [activeLesson, setActiveLesson] = useState<any>(null);
 
   const totalLessons = PYTHON_LESSONS.length;
   const completedCount = completedLessonIds.length;

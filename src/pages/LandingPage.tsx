@@ -1,11 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Hero from '../components/Hero';
 import Footer from '../components/Footer';
-import { Sparkles, BrainCircuit, BookOpen, Terminal, Cpu, Trophy, ArrowRight, Layers, Users } from 'lucide-react';
+import AuthModal from '../components/AuthModal';
+import { useAuth } from '../contexts/AuthContext';
+import { Sparkles, BrainCircuit, BookOpen, Terminal, Cpu, Trophy, ArrowRight, Layers, Users, LogIn, LogOut, User } from 'lucide-react';
 
 export default function LandingPage() {
   const navigate = useNavigate();
+  const { user, signOut } = useAuth();
+  const [authModalOpen, setAuthModalOpen] = useState(false);
 
   const handleStartLearning = () => {
     navigate('/courses');
@@ -33,13 +37,38 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 sm:gap-4">
             <button
               onClick={() => navigate('/courses')}
               className="text-xs font-mono font-bold text-[#6E5D4F] hover:text-[#2A1E17] transition-colors hidden sm:block"
             >
               Browse Courses
             </button>
+
+            {user ? (
+              <div className="flex items-center gap-2">
+                <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#EFE5D9] border border-[#D6C5B3] text-xs font-mono text-[#2A1E17]">
+                  <User className="w-3.5 h-3.5 text-[#A6632B]" />
+                  <span className="truncate max-w-[120px]">{user.email?.split('@')[0]}</span>
+                </div>
+                <button
+                  onClick={() => signOut()}
+                  className="p-2 rounded-xl bg-[#EFE5D9] hover:bg-rose-500/20 text-rose-800 border border-[#D6C5B3] transition-colors text-xs font-mono flex items-center gap-1"
+                  title="Sign Out"
+                >
+                  <LogOut className="w-4 h-4" />
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => setAuthModalOpen(true)}
+                className="px-3.5 py-2 rounded-xl bg-[#EFE5D9] hover:bg-[#E0D3C1] border border-[#D6C5B3] text-[#2A1E17] font-mono text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm"
+              >
+                <LogIn className="w-3.5 h-3.5 text-[#A6632B]" />
+                <span>Sign In / Sign Up</span>
+              </button>
+            )}
+
             <button
               onClick={handleStartLearning}
               className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#A6632B] via-[#C77A38] to-[#8C4A1B] text-white font-mono text-xs font-bold shadow-md shadow-[#A6632B]/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-2"
@@ -169,6 +198,11 @@ export default function LandingPage() {
       </main>
 
       <Footer />
+
+      <AuthModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+      />
     </div>
   );
 }
